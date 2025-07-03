@@ -27,20 +27,24 @@ a terminal wallet reminiscent of dos-era tui interfaces — but built with moder
 2. run these commands one by one:
 
 ```bash
-git clone https://github.com/octra-labs/octra_pre_client.git
+git clone https://github.com/hiepntnaa/octra_pre_client.git
 cd octra_pre_client
 python3 -m venv venv
 source venv/bin/activate # for windows use: venv\Scripts\activate
 pip install -r requirements.txt
 cp wallet.json.example wallet.json
+cp wallet.json.example wallet2.json
+cp wallet.json.example wallet3.json
+cp wallet.json.example wallet4.json
+cp wallet.json.example wallet5.json
 ```
 
 3. open wallet.json and edit it (change placeholders to your wallet data):
 
 ```json
 {
-  "priv": "private-key-here",
-  "addr": "octxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "priv": "private-key",
+  "addr": "octra",
   "rpc": "https://octra.network"
 }
 ```
