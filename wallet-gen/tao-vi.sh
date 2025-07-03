@@ -1,27 +1,33 @@
 #!/bin/bash
 
-# Hỏi người dùng muốn tạo bao nhiêu ví
-read -p "Bạn muốn tạo bao nhiêu ví? " NUM_WALLETS
-
-# Kiểm tra đầu vào có phải là số không
-if ! [[ "$NUM_WALLETS" =~ ^[0-9]+$ ]]; then
-    echo "❌ Vui lòng nhập một số nguyên hợp lệ."
-    exit 1
+if [ -z "$1" ]; then
+    read -p "Nhap so vi can tao: " COUNT
+else
+    COUNT=$1
 fi
 
-# Tên file kết quả
-OUTPUT_FILE="wallets_output.txt"
+# File CSV đầu ra
+OUTPUT_FILE="wallets_summary.csv"
 
-# Xóa file cũ nếu tồn tại
-> "$OUTPUT_FILE"
-
-echo "������ Đang tạo $NUM_WALLETS ví..."
+# Ghi tiêu đề cột, dùng dấu chấm phẩy
+echo "Wallet;Mnemonic;PrivateKey;PublicKey;Address" > "$OUTPUT_FILE"
 
 # Vòng lặp tạo ví
-for ((i=1; i<=NUM_WALLETS; i++)); do
-    echo "Ví $i:" >> "$OUTPUT_FILE"
-    bun wallet_generator.ts generate >> "$OUTPUT_FILE"
-    echo -e "\n" >> "$OUTPUT_FILE"
+for ((i=1; i<=COUNT; i++)); do
+    echo "Dang tao vi $i..."
+
+    OUTPUT=$(bun wallet_generator.ts generate)
+
+    MNEMONIC=$(echo "$OUTPUT" | grep -i "^Mnemonic:" | cut -d':' -f2- | xargs)
+    PRIVKEY=$(echo "$OUTPUT" | grep -i "^Private Key" | cut -d':' -f2- | xargs)
+    PUBKEY=$(echo "$OUTPUT" | grep -i "^Public Key" | cut -d':' -f2- | xargs)
+    ADDRESS=$(echo "$OUTPUT" | grep -i "^Address:" | cut -d':' -f2- | xargs)
+
+    # Escape dấu nháy kép nếu có
+    MNEMONIC_ESCAPED=$(echo "$MNEMONIC" | sed 's/"/""/g')
+
+    # Ghi dòng với dấu chấm phẩy
+    echo "\"Wallet $i\";\"$MNEMONIC_ESCAPED\";\"$PRIVKEY\";\"$PUBKEY\";\"$ADDRESS\"" >> "$OUTPUT_FILE"
 done
 
-echo "✅ Đã tạo $NUM_WALLETS ví. Kết quả lưu trong: $OUTPUT_FILE"
+echo "Da tao $COUNT vi va luu vao '$OUTPUT_FILE'"
