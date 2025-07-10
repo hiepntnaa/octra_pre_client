@@ -101,7 +101,7 @@ async def run_once(to_addr):
     print("✅ Cycle complete. Program ends.\n")
 
 async def main():
-    if not cli.ld():
+    if not cli2.ld():
         print("[error] Failed to load wallet")
         return
 
@@ -118,8 +118,8 @@ async def main():
         print(f"[error] Exception occurred: {e}")
     finally:
         try:
-            if cli.session and not cli.session.closed:
-                await cli.session.close()
+            if cli2.session and not cli2.session.closed:
+                await cli2.session.close()
         except Exception as e:
             print(f"[error] Failed to close session: {e}")
 
