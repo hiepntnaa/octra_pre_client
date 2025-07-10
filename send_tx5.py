@@ -11,7 +11,7 @@ from cli5 import (
 )
 
 async def delay():
-    seconds = random.randint(120, 180)
+    seconds = random.randint(180, 240)
     print(f"[delay] Waiting for {seconds} seconds...\n")
     await asyncio.sleep(seconds)
 
