@@ -7,7 +7,7 @@ from cli3 import (
     ld, st, mk, snd, μ,
     encrypt_balance, decrypt_balance,
     get_encrypted_balance, create_private_transfer,
-    get_address_info
+    get_address_info, get_pending_transfers, claim_private_transfer
 )
 
 async def delay():
@@ -82,6 +82,38 @@ async def do_decrypt(max_amount):
 
     print("[decrypt] Failed after 3 attempts: cannot get balance")
 
+async def do_claim_transfers():
+    # Đảm bảo session được khởi tạo nếu chưa có
+    if not cli3.session:
+        await cli3.req("GET", "/ping")  # tạo session giả
+    
+    await asyncio.sleep(5)  # đợi blockchain đồng bộ
+
+    transfers = await get_pending_transfers()
+    if not transfers:
+        print("[claim] No transfers found.")
+        return
+
+    if len(transfers) <= 1:
+        print(f"[claim] Skipping: only {len(transfers)} transfer(s) available.")
+        return
+
+    print(f"[claim] Found {len(transfers)} claimable transfers. Claiming now...")
+
+    success = 0
+    for t in transfers:
+        transfer_id = t.get("id")
+        if not transfer_id:
+            continue
+        ok, result = await claim_private_transfer(transfer_id)
+        if ok:
+            success += 1
+            print(f"[claim] ✅ Claimed transfer #{transfer_id}")
+        else:
+            print(f"[claim] ✗ Failed to claim #{transfer_id}: {result.get('error')}")
+
+    print(f"[claim] Done. Claimed {success}/{len(transfers)} transfers.")
+
 async def run_once(to_addr):
     print(f"--- Starting single cycle for recipient: {to_addr} ---")
 
@@ -97,6 +129,9 @@ async def run_once(to_addr):
     await delay()
 
     await do_decrypt(encrypt_amount)
+    await delay()
+
+    await do_claim_transfers()
 
     print("✅ Cycle complete. Program ends.\n")
 
