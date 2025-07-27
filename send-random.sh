@@ -10,8 +10,8 @@ while true; do
     # Thực thi lệnh
     python3 "$wallet"
 
-    # Sinh thời gian ngủ ngẫu nhiên từ 900 (15 phút) đến 1500 (25 phút) giây
-    sleep_time=$((RANDOM % 601 + 900))  # 900 + [0–600] = 900–1500
+    # Sinh thời gian ngủ ngẫu nhiên từ 10800 (180 phút) đến 12600 (210 phút) giây
+    sleep_time=$((RANDOM % 1801 + 10800)) 
     echo "[$(date)] Sleeping for $sleep_time seconds (~$((sleep_time / 60)) minutes)..."
     sleep "$sleep_time"
 done
