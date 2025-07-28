@@ -1,0 +1,24 @@
+#!/usr/bin/expect -f
+apt install expect -y
+cd /root/octra_pre_client/ocs01-test
+
+foreach dir {01 02 03 04} {
+
+    puts "\n--- Dang xu ly thu muc $dir ---\n"
+    cd $dir
+
+    spawn ./ocs01-test
+
+    expect "choice:"
+    send "3\r"
+
+    expect "wait for confirmation? y/n:"
+    send "y\r"
+
+    expect "waiting.."
+    sleep 3
+
+    send "0\r"
+    expect eof
+    cd ..
+}
