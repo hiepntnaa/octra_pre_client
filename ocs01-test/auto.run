@@ -1,5 +1,5 @@
 #!/usr/bin/expect -f
-apt install expect -y
+
 cd /root/octra_pre_client/ocs01-test
 
 foreach dir {01 02 03 04} {
